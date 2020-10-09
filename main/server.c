@@ -12,8 +12,8 @@
 
 static const int RX_BUF_SIZE = 128;
 
-#define TXD_PIN (GPIO_NUM_4)
-#define RXD_PIN (GPIO_NUM_5)
+#define TXD_PIN (GPIO_NUM_3)
+#define RXD_PIN (GPIO_NUM_1)
 
 
 void init(void) {
