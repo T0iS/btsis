@@ -42,7 +42,7 @@ void OnConnected(void *para)
 
 void app_main()
 {
-  //init();
+  UART_init();
   esp_log_level_set(TAG, ESP_LOG_DEBUG);
   connectionSemaphore = xSemaphoreCreateBinary();
   wifiInit();

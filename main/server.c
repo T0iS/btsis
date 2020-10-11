@@ -10,13 +10,13 @@
 
 #define TAG "SERVER"
 
-static const int RX_BUF_SIZE = 128;
+static const int RX_BUF_SIZE = 1024;
 
-#define TXD_PIN (GPIO_NUM_3)
-#define RXD_PIN (GPIO_NUM_1)
+#define TXD_PIN (GPIO_NUM_4)
+#define RXD_PIN (GPIO_NUM_2)
 
 
-void init(void) {
+void UART_init(void) {
     const uart_config_t uart_config = {
         .baud_rate = 9600,
         .data_bits = UART_DATA_8_BITS,
@@ -98,7 +98,7 @@ static esp_err_t on_dir_set(httpd_req_t *req)
     ESP_LOGI(TAG, "%s", str);
 
     //serial connection
-    //sendData("UART", str);
+    uart_write_bytes(UART_NUM_1, (const char *) "r\n", 2);
 
 
     cJSON_Delete(rcv);

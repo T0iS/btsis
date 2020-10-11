@@ -8,6 +8,6 @@
     "*.mdx": "tdx",
     "stdio.h": "c"
   },
-  "idf.port": "/dev/ttyUSB0",
+  "idf.port": "/dev/ttyUSB1",
   "C_Cpp.errorSquiggles": "Enabled"
 }
