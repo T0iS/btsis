@@ -1,4 +1,4 @@
-set(COMPONENT_SRCS "main.c"
+set(COMPONENT_SRCS "control.c" "main.c"
                     "server.c"
                     "connect.c")
 set(COMPONENT_ADD_INCLUDEDIRS ".")
