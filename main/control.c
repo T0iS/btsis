@@ -10,7 +10,7 @@ float absolute(float value) {
   return value;  
 }
 
-void turn_deg_h (uart_port_t uart_num, int h_dest_deg){
+void turn_deg_h (uart_port_t uart_num, float h_dest_deg){
 
     uint8_t *data = (uint8_t *) malloc(BUF_SIZE);
     int temp1, temp2;

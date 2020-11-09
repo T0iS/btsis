@@ -10,6 +10,7 @@
 #include "nvs_flash.h"
 #include "server.h"
 #include "connect.h"
+#include "control.h"
 #include <sys/param.h>
 #include "esp_system.h"
 #include "esp_event.h"
@@ -18,6 +19,7 @@
 #include "lwip/sockets.h"
 #include "lwip/sys.h"
 #include <lwip/netdb.h>
+#include "driver/uart.h"
 
 #define TAG "DATA"
 #define NUMBER CONFIG_TEL_NUMBER
@@ -53,7 +55,9 @@ static void do_retransmit(const int sock)
             // Walk-around for robust implementation. 
             int to_write = len;
             while (to_write > 0) {
-                int written = send(sock, "0.0\n0.1\n", strlen("0.0\n0.1\n"), 0);
+                char sent_data[128];
+                int n = sprintf(sent_data, "%f\n%f\n",get_radius_h(UART_NUM_1), get_radius_v(UART_NUM_1));
+                int written = send(sock, sent_data, n, 0);
                 if (written < 0) {
                     ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
                 }
