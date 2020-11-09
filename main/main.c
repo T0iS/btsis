@@ -56,7 +56,7 @@ static void do_retransmit(const int sock)
             int to_write = len;
             while (to_write > 0) {
                 char sent_data[128];
-                int n = sprintf(sent_data, "%f\n%f\n",get_radius_h(UART_NUM_1), get_radius_v(UART_NUM_1));
+                int n = sprintf(sent_data, "%f\n%f\n",(float)get_radius_h(UART_NUM_1), (float)get_radius_v(UART_NUM_1));
                 int written = send(sock, sent_data, n, 0);
                 if (written < 0) {
                     ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
