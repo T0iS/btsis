@@ -41,7 +41,13 @@ static void do_retransmit(const int sock)
             ESP_LOGW(TAG, "Connection closed");
         } else {
             rx_buffer[len] = 0; // Null-terminate whatever is received and treat it like a string
-            ESP_LOGI(TAG, "Received %d bytes: %s", len, rx_buffer);
+            //ESP_LOGI(TAG, "Received %d bytes: %s", len, rx_buffer);
+            double az, el;
+            char* buf_pointer = rx_buffer;
+            buf_pointer = str_replace(buf_pointer, ",", ".");
+            //ESP_LOGI(TAG, "Received PP %s", rx_buffer);
+
+            sscanf(buf_pointer, "P %lf %lf", &az, &el);
 
             // send() can return less bytes than supplied length.
             // Walk-around for robust implementation. 
