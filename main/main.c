@@ -65,14 +65,14 @@ void* thread_turn_h(void* args){
     
     
     //if(p->dir=='h'){
-        //xSemaphoreTake(sem_threads, 10000 / portTICK_RATE_MS);
+        xSemaphoreTake(sem_threads, 10000 / portTICK_RATE_MS);
         turn_deg_h(p->uart_num, p->value_h);
-        //xSemaphoreGive(sem_threads);
+        xSemaphoreGive(sem_threads);
    // }
     //if(p->dir=='v'){
-        //xSemaphoreTake(sem_threads, 10000 / portTICK_RATE_MS);
-        //turn_deg_v(p->uart_num, p->value_v);
-        //xSemaphoreGive(sem_threads);
+        xSemaphoreTake(sem_threads, 10000 / portTICK_RATE_MS);
+        turn_deg_v(p->uart_num, p->value_v);
+        xSemaphoreGive(sem_threads);
     //}
     
     return NULL;
@@ -93,7 +93,7 @@ static void do_retransmit(const int sock)
         } else if (len == 0) {
             ESP_LOGW(TAG, "Connection closed");
         } else {
-            rx_buffer[len] = 0; // Null-terminate whatever is received and treat it like a string
+            rx_buffer[len] = 0; // Null-terminate 
             double az, el;
             char* buf_pointer = rx_buffer;
             buf_pointer = str_replace(buf_pointer, ",", ".");
@@ -103,7 +103,7 @@ static void do_retransmit(const int sock)
                    
             if(rx_buffer[0] == 'P'){
 
-                //pthread_t threads[2];
+                pthread_t threads[2];
                 
                 ESP_LOGI(TAG, "Received P %f %f", az, el);
                 
@@ -111,17 +111,17 @@ static void do_retransmit(const int sock)
                 args.uart_num = UART_NUM_1;
                 args.value_h = az;
                 args.value_v = el;
-                //pthread_create(&threads[0], NULL, thread_turn_h, (void*)&args);
-
-                /*struct pt_args args2;
+                pthread_create(&threads[0], NULL, thread_turn_h, (void*)&args);
+/*
+                struct pt_args args2;
                 args2.uart_num = UART_NUM_1;
-                args2.value = el;
+                args2.value_ = el;
                 args2.dir = 'v';
                 pthread_create(&threads[1], NULL, thread_turn_h, (void*)&args2);
                 */
                 //uart_write_bytes(UART_NUM_1, "r\n", 2);
-                turn_deg_h(UART_NUM_1, az);
-                turn_deg_v(UART_NUM_1, el);
+                //turn_deg_h(UART_NUM_1, az);
+                //turn_deg_v(UART_NUM_1, el);
 
                 //pthread_join(threads[0], NULL);
                 //pthread_join(threads[1], NULL);
