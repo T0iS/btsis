@@ -47,7 +47,7 @@ xSemaphoreHandle connectionSemaphore;
 #define UART_RXD (GPIO_NUM_2)
 
 
-//SemaphoreHandle_t  sem_threads = NULL; 
+SemaphoreHandle_t  sem_threads = NULL; 
 
 
 
