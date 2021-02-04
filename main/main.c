@@ -55,7 +55,7 @@ struct pt_args{
     int uart_num;
     double value_h;
     double value_v;
-    char dir;
+    //char dir;
 };
 
 
@@ -64,21 +64,19 @@ void* thread_turn_h(void* args){
     struct pt_args* p = args;
     
     
-    if(p->dir=='h'){
+    //if(p->dir=='h'){
         //xSemaphoreTake(sem_threads, 10000 / portTICK_RATE_MS);
-        ESP_LOGE(TAG, "tocim H\n");
-        turn_deg_h(UART_NUM_1, p->value_h);
+        //turn_deg_h(p->uart_num, p->value_h);
         //xSemaphoreGive(sem_threads);
-    }
-    if(p->dir=='v'){
+   // }
+    //if(p->dir=='v'){
        // xSemaphoreTake(sem_threads, 10000 / portTICK_RATE_MS);
-        ESP_LOGE(TAG, "tocim V\n");
-        turn_deg_v(UART_NUM_1, p->value_v);
+       // turn_deg_v(p->uart_num, p->value_v);
         //xSemaphoreGive(sem_threads);
-    }
+    //}
 
-    //turn_deg_h(UART_NUM_1, p->value_h);
-    //turn_deg_v(UART_NUM_1, p->value_v);
+    turn_deg_h(UART_NUM_1, p->value_h);
+    turn_deg_v(UART_NUM_1, p->value_v);
 
     
     ESP_LOGE(TAG, "thread %f %f", p->value_h, p->value_v);
@@ -120,17 +118,15 @@ static void do_retransmit(const int sock)
                 args.uart_num = UART_NUM_1;
                 args.value_h = az;
                 args.value_v = el;
-                args.dir = 'h';
                 ESP_LOGI(TAG, "pre create");
                 pthread_create(&threads[0], NULL, thread_turn_h, (void*)&args);
-
+/*
                 struct pt_args args2;
                 args2.uart_num = UART_NUM_1;
-                args2.value_h = az;
-                args2.value_v = el;
-                args.dir = 'v';
+                args2.value_ = el;
+                args2.dir = 'v';
                 pthread_create(&threads[1], NULL, thread_turn_h, (void*)&args2);
-                
+                */
                 //uart_write_bytes(UART_NUM_1, "r\n", 2);
                 //turn_deg_h(UART_NUM_1, az);
                 //turn_deg_v(UART_NUM_1, el);
