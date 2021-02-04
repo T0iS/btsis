@@ -1,14 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Document</title>
-</head>
-<body>
-    <input type="text" id="dir_text"><div id="direction_div" style="border:2px solid black; height:20px; width:40px;" onclick="sendDir()">SEND</div>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>btsis antena controler</title>
 
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+    <script src="js/script.js"></script>
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://m.w3newbie.com/you-tube.css">
+</head>
+
+<body style="background-color: #929292">
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-md navbar-light bg-dark sticky-top" style="padding: 0; ">
+   <div class="container-fluid">
+       <a class="navbar-brand" href="#"><img src="img/logo_small.png" style="width: 20%; height: 20%;">btsis</a>
+        <div>btsis™ web interface by t0is 2020</div>
+
+   </div>
+
+</nav>
+
+
+
+
+
+<div class="main_content">
+
+    <div class="manual_button" style="visibility: hidden; height: 27px;" id="back_button" onclick="back_to_menu()" > BACK </div>
+<div class="main-content-buttons">
+    <div class="main_button" id="manual_c_button" onclick="show_manual()">MANUAL CONTROLS</div>
+    <div class="main_button" id="gpredict_button" style="background: #d7152c;" onclick="gpredict_toggle()">GPREDICT</div>
+    <div class="main_button">TEXXT3</div>
+</div>
+<div class="manual_control_buttons" >
+    <div style="text-align: center;"><div class="manual_button">UP</div></div>
+    <div style="display: flex;
+    flex-direction: row;
+    ">
+        <div class="manual_button">LEFT</div>
+        <div class="manual_button">STOP</div>
+        <div class="manual_button">RIGHT</div>
+    </div>
+    <div style="text-align: center;"><div class="manual_button">DOWN</div></div>
+
+</div>
+
+</div>
+
+
+
+
+
 </body>
 </html>
+

@@ -8,8 +8,6 @@
 #include "esp_wifi.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
-#include "server.h"
-#include "connect.h"
 #include <sys/param.h>
 #include "esp_system.h"
 #include "esp_event.h"
@@ -18,6 +16,25 @@
 #include "lwip/sockets.h"
 #include "lwip/sys.h"
 #include <lwip/netdb.h>
+#include "driver/uart.h"
+#include "driver/gpio.h"
+#include <sys/param.h>
+
+#include "esp_system.h"
+#include "esp_wifi.h"
+#include "esp_event.h"
+#include "esp_log.h"
+#include "nvs_flash.h"
+#include "esp_netif.h"
+#include "lwip/err.h"
+#include "lwip/sockets.h"
+#include "lwip/sys.h"
+#include <lwip/netdb.h>
+
+#include "server.h"
+#include "connect.h"
+#include "control.h"
+#include <pthread.h>
 
 #define TAG "DATA"
 #define NUMBER CONFIG_TEL_NUMBER
@@ -25,6 +42,48 @@
 xSemaphoreHandle connectionSemaphore;
 
 #define PORT 4533
+#define BUF_SIZE (1024)
+#define UART_TXD (GPIO_NUM_4)
+#define UART_RXD (GPIO_NUM_2)
+
+
+SemaphoreHandle_t  sem_threads = NULL; 
+
+
+
+struct pt_args{
+    int uart_num;
+    double value_h;
+    double value_v;
+    //char dir;
+};
+
+
+void* thread_turn_h(void* args){
+
+    struct pt_args* p = args;
+    
+    
+    //if(p->dir=='h'){
+        //xSemaphoreTake(sem_threads, 10000 / portTICK_RATE_MS);
+        //turn_deg_h(p->uart_num, p->value_h);
+        //xSemaphoreGive(sem_threads);
+   // }
+    //if(p->dir=='v'){
+       // xSemaphoreTake(sem_threads, 10000 / portTICK_RATE_MS);
+       // turn_deg_v(p->uart_num, p->value_v);
+        //xSemaphoreGive(sem_threads);
+    //}
+
+    turn_deg_h(UART_NUM_1, p->value_h);
+    turn_deg_v(UART_NUM_1, p->value_v);
+
+    
+    ESP_LOGE(TAG, "thread %f %f", p->value_h, p->value_v);
+    
+
+    return NULL;
+}
 
 
 
@@ -32,6 +91,7 @@ static void do_retransmit(const int sock)
 {
     int len;
     char rx_buffer[128];
+    
 
     do {
         len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
@@ -40,19 +100,59 @@ static void do_retransmit(const int sock)
         } else if (len == 0) {
             ESP_LOGW(TAG, "Connection closed");
         } else {
-            rx_buffer[len] = 0; // Null-terminate whatever is received and treat it like a string
-            ESP_LOGI(TAG, "Received %d bytes: %s", len, rx_buffer);
+            rx_buffer[len] = 0; // Null-terminate 
+            double az, el;
+            char* buf_pointer = rx_buffer;
+            buf_pointer = str_replace(buf_pointer, ",", ".");
+            //ESP_LOGI(TAG, "Received PP %s", rx_buffer);
+
+            sscanf(buf_pointer, "P %lf %lf", &az, &el);
+                   
+            if(rx_buffer[0] == 'P'){
+
+                pthread_t threads[2];
+                
+                ESP_LOGI(TAG, "Received P %f %f", az, el);
+                
+                struct pt_args args;
+                args.uart_num = UART_NUM_1;
+                args.value_h = az;
+                args.value_v = el;
+                ESP_LOGI(TAG, "pre create");
+                pthread_create(&threads[0], NULL, thread_turn_h, (void*)&args);
+/*
+                struct pt_args args2;
+                args2.uart_num = UART_NUM_1;
+                args2.value_ = el;
+                args2.dir = 'v';
+                pthread_create(&threads[1], NULL, thread_turn_h, (void*)&args2);
+                */
+                //uart_write_bytes(UART_NUM_1, "r\n", 2);
+                //turn_deg_h(UART_NUM_1, az);
+                //turn_deg_v(UART_NUM_1, el);
+                ESP_LOGI(TAG, "pre join");
+                //pthread_join(threads[0], NULL);
+                //pthread_join(threads[1], NULL);
+                ESP_LOGI(TAG, "after join");
+
+            }
 
             // send() can return less bytes than supplied length.
             // Walk-around for robust implementation. 
             int to_write = len;
             while (to_write > 0) {
-                int written = send(sock, "0.0\n0.1\n", strlen("0.0\n0.1\n"), 0);
+                //azimuth, elevation
+                char sent_data[128]; //float is 32bit
+                printf("%f\n%f\n",get_radius_h(UART_NUM_1), get_radius_v(UART_NUM_1));
+
+                int n = sprintf(sent_data, "%f\n%f\n",get_radius_h(UART_NUM_1), get_radius_v(UART_NUM_1));
+                int written = send(sock, sent_data, n, 0);
+                //int written = send(sock, "%f\n%f\n", strlen("0.0\n0.1\n"), 0);
                 if (written < 0) {
                     ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
                 }
                 else {
-                    ESP_LOGE(TAG, "SENT 0.0\n0.1\n");
+                    ESP_LOGE(TAG, "SENT %s", sent_data);
                 }
                 to_write -= written;
             }
@@ -67,9 +167,10 @@ void OnConnected(void* para)
   {
     if (xSemaphoreTake(connectionSemaphore, 10000 / portTICK_RATE_MS))
     {
-      RegisterEndPoints();
-      
-      xSemaphoreTake(connectionSemaphore, portMAX_DELAY);
+        RegisterEndPoints();
+
+            
+        xSemaphoreTake(connectionSemaphore, portMAX_DELAY);
     }
     else
     {
@@ -89,7 +190,8 @@ char addr_str[128];
     int addr_family;
     int ip_protocol;
 
-
+    //sem_threads = xSemaphoreCreateBinary();
+   
 #ifdef CONFIG_EXAMPLE_IPV4
     struct sockaddr_in dest_addr;
     dest_addr.sin_addr.s_addr = htonl(INADDR_ANY);
