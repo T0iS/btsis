@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "driver/uart.h"
+#include <string.h>
 #include <math.h>
 #include "control.h"
 #include <string.h>
@@ -11,7 +12,7 @@ float absolute(float value) {
   return value;  
 }
 
-void turn_deg_h (uart_port_t uart_num, float h_dest_deg){
+void turn_deg_v (uart_port_t uart_num, float h_dest_deg){
 
     uint8_t *data = (uint8_t *) malloc(BUF_SIZE);
     int temp1, temp2;
@@ -54,7 +55,7 @@ void turn_deg_h (uart_port_t uart_num, float h_dest_deg){
     
 }
 
-void turn_deg_v (uart_port_t uart_num, float v_dest_deg){
+void turn_deg_h (uart_port_t uart_num, float v_dest_deg){
 
     uint8_t *data = (uint8_t *) malloc(BUF_SIZE);
     int temp1, temp2;
@@ -93,7 +94,7 @@ void turn_deg_v (uart_port_t uart_num, float v_dest_deg){
     }
 }
 
-float get_radius_v(uart_port_t uart_num){
+float get_radius_h(uart_port_t uart_num){
 
     int temp, len;
     float v_deg;
@@ -103,11 +104,11 @@ float get_radius_v(uart_port_t uart_num){
     sscanf((int*)data, "%*[^V]V:%4d(%f)", &temp, &v_deg);
 
     free(data);
-    return v_deg;
+    return v_deg; 
 
 }
 
-float get_radius_h(uart_port_t uart_num){
+float get_radius_v(uart_port_t uart_num){
 
     int temp, len;
     float h_deg;
@@ -119,7 +120,6 @@ float get_radius_h(uart_port_t uart_num){
     free(data);
     return h_deg;
 }
-
 
 char *str_replace(char *orig, char *rep, char *with) {
     char *result; // the return string
@@ -165,4 +165,5 @@ char *str_replace(char *orig, char *rep, char *with) {
     }
     strcpy(tmp, orig);
     return result;
-} 
+}
+    
