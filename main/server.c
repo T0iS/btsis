@@ -95,10 +95,14 @@ static esp_err_t on_dir_set(httpd_req_t *req)
     cJSON *rcv = cJSON_Parse(buf);
     cJSON *direction = cJSON_GetObjectItem(rcv, "direction"); 
     char *str = cJSON_GetStringValue(direction); 
-    ESP_LOGI(TAG, "%s", str);
+    
+    char *newstr = malloc(strlen(str) + 1);
+    strcpy(newstr, str);
+    strcat(newstr, "\n");
+    ESP_LOGI(TAG, "%s", newstr);
 
     //serial connection
-    uart_write_bytes(UART_NUM_1, (const char *) "r\n", 2);
+    uart_write_bytes(UART_NUM_1, (const char *)newstr, 2);
 
 
     cJSON_Delete(rcv);

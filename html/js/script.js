@@ -1,3 +1,22 @@
+async function getT(){
+    const result = await fetch("/hello");
+    const h = await result.json();
+    console.log(h);
+}
+
+getT();
+
+let direction = 0;
+async function sendDir(element_id){
+   
+
+
+    fetch("/dir", {method:"POST", body: JSON.stringify({"direction": element_id})});
+
+    console.log(element_id);
+    console.log(JSON.stringify({"direction": element_id}));
+} 
+
 
 
 function show_manual(){
@@ -36,7 +55,5 @@ function gpredict_toggle(){
         $('#gpredict_button').css("background", "#15D74C");
     }
 
-
-
-
 }
+

@@ -12,7 +12,7 @@
     <script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
     <script src="js/script.js"></script>
     <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://m.w3newbie.com/you-tube.css">
+    
 </head>
 
 <body style="background-color: #929292">
@@ -40,15 +40,15 @@
     <div class="main_button">TEXXT3</div>
 </div>
 <div class="manual_control_buttons" >
-    <div style="text-align: center;"><div class="manual_button">UP</div></div>
+    <div style="text-align: center;"><div class="manual_button" id="d" onclick="sendDir(this.id)">UP</div></div>
     <div style="display: flex;
     flex-direction: row;
     ">
-        <div class="manual_button">LEFT</div>
-        <div class="manual_button">STOP</div>
-        <div class="manual_button">RIGHT</div>
+        <div class="manual_button" id="l" onclick="sendDir(this.id)">LEFT</div>
+        <div class="manual_button" id=" " onclick="sendDir(this.id)">STOP</div>
+        <div class="manual_button" id="r" onclick="sendDir(this.id)">RIGHT</div>
     </div>
-    <div style="text-align: center;"><div class="manual_button">DOWN</div></div>
+    <div style="text-align: center;"><div class="manual_button" id="u" onclick="sendDir(this.id)">DOWN</div></div>
 
 </div>
 
