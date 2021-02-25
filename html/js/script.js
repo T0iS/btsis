@@ -17,6 +17,16 @@ async function sendDir(element_id){
     console.log(JSON.stringify({"direction": element_id}));
 } 
 
+async function sendGpredictEnabled(value){
+   
+
+
+    fetch("/gpredict_enable", {method:"POST", body: JSON.stringify({"gpredict": value})});
+
+    //console.log(element_id);
+    //console.log(JSON.stringify({"direction": element_id}));
+} 
+
 
 
 function show_manual(){
@@ -50,9 +60,11 @@ function gpredict_toggle(){
 
     if(rgb2hex(color).toUpperCase() == "#15D74C" ) {
         $('#gpredict_button').css("background", "#d7152c");
+        sendGpredictEnabled("false");
     }
     else {
         $('#gpredict_button').css("background", "#15D74C");
+        sendGpredictEnabled("true");
     }
 
 }

@@ -15,6 +15,9 @@ static const int RX_BUF_SIZE = 1024;
 #define TXD_PIN (GPIO_NUM_4)
 #define RXD_PIN (GPIO_NUM_2)
 
+bool GPREDICT_ALLOWED = false;
+
+
 
 void UART_init(void) {
     const uart_config_t uart_config = {
@@ -96,6 +99,7 @@ static esp_err_t on_dir_set(httpd_req_t *req)
     cJSON *direction = cJSON_GetObjectItem(rcv, "direction"); 
     char *str = cJSON_GetStringValue(direction); 
     
+    //extending the command by space, no null termination needed
     char *newstr = malloc(strlen(str) + 1);
     strcpy(newstr, str);
     strcat(newstr, "\n");
@@ -111,6 +115,30 @@ static esp_err_t on_dir_set(httpd_req_t *req)
     return ESP_OK;
 }
 
+static esp_err_t gpredict_enable(httpd_req_t *req)
+{
+    ESP_LOGI(TAG, "url %s was hit", req->uri);
+    char buf[150];
+    memset(&buf, 0, sizeof(buf));
+    httpd_req_recv(req, buf, req->content_len);
+    cJSON *rcv = cJSON_Parse(buf);
+    cJSON *enable_gpredict = cJSON_GetObjectItem(rcv, "gpredict"); 
+    char *str = cJSON_GetStringValue(enable_gpredict); 
+    
+    if(strcmp(str, (const char*)"true")){
+        GPREDICT_ALLOWED = true;    
+    }
+    else{
+        GPREDICT_ALLOWED = false;
+    }
+
+
+    cJSON_Delete(rcv);
+    httpd_resp_set_status(req, "200 OK");
+    httpd_resp_send(req, NULL, 0);
+    return ESP_OK;
+    
+}
 
 void RegisterEndPoints(void)
 {
@@ -137,6 +165,12 @@ void RegisterEndPoints(void)
         .method = HTTP_POST,
         .handler = on_dir_set};
     httpd_register_uri_handler(server, &dir_end_point_config);
+
+    httpd_uri_t gpredict_end_point_config = {
+        .uri = "/gpredict_enable",
+        .method = HTTP_GET,
+        .handler = gpredict_enable};
+    httpd_register_uri_handler(server, &gpredict_end_point_config);
 
     httpd_uri_t first_end_point_config = {
         .uri = "/*",
