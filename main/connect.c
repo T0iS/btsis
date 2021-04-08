@@ -58,8 +58,8 @@ void wifiInit()
   wifi_config_t wifi_config =
       {
           .sta = {
-              .ssid = "TP-Link_6265",
-              .password = "95072166"}};
+              .ssid = "t0is_24",
+              .password = "Silenceisgolden555"}};
   esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config);
   ESP_ERROR_CHECK(esp_wifi_start());
 }

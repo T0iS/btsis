@@ -46,6 +46,19 @@ body {
     margin: 2px;
 
 }
+.enable_button{
+    background: #d7152c;
+
+    border-radius: 11px;
+    padding:       0px 6px;
+    color:         #ffffff;
+    display:       inline-block;
+    text-align:    center;
+    font-weight: bold;
+    margin-bottom: 6px;
+
+}
+
 .manual_control_buttons{
     display:flex;
     flex-direction: column;

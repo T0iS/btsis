@@ -6,6 +6,7 @@
 #include "esp_spiffs.h"
 #include "driver/uart.h"
 #include "driver/gpio.h"
+#include "control.h"
 
 
 #define TAG "SERVER"
@@ -15,7 +16,7 @@ static const int RX_BUF_SIZE = 1024;
 #define TXD_PIN (GPIO_NUM_4)
 #define RXD_PIN (GPIO_NUM_2)
 
-bool GPREDICT_ALLOWED = false;
+bool GPREDICT_ALLOWED = true;
 
 
 
@@ -79,10 +80,11 @@ static esp_err_t on_url_hit(httpd_req_t *req)
     return ESP_OK;
 }
 
-static esp_err_t on_hello(httpd_req_t *req)
+static esp_err_t on_coordinates(httpd_req_t *req)
 {
     ESP_LOGI(TAG, "url %s was hit", req->uri);
-    char *message = "{\"hello\":22}";
+    char message[80];
+    sprintf(message, "{\"el\":\"%f\",\"az\":\"%f\"}", get_radius_v(UART_NUM_1), get_radius_h(UART_NUM_1));
     httpd_resp_send(req, message, strlen(message));
     httpd_resp_set_status(req, "204 NO CONTENT");
     return ESP_OK;
@@ -108,6 +110,27 @@ static esp_err_t on_dir_set(httpd_req_t *req)
     //serial connection
     uart_write_bytes(UART_NUM_1, (const char *)newstr, 2);
 
+
+    cJSON_Delete(rcv);
+    httpd_resp_set_status(req, "204 NO CONTENT");
+    httpd_resp_send(req, NULL, 0);
+    return ESP_OK;
+}
+
+static esp_err_t on_dirCustom_set(httpd_req_t *req)
+{
+    ESP_LOGI(TAG, "url %s was hit", req->uri);
+    char buf[150];
+    memset(&buf, 0, sizeof(buf));
+    httpd_req_recv(req, buf, req->content_len);
+    cJSON *rcv = cJSON_Parse(buf);
+    cJSON *el_json = cJSON_GetObjectItem(rcv, "el"); 
+    cJSON *az_json = cJSON_GetObjectItem(rcv, "az"); 
+    char *el = cJSON_GetStringValue(el_json); 
+    char *az = cJSON_GetStringValue(az_json); 
+    
+    turn_deg_h(UART_NUM_1, atof(az));
+    turn_deg_v(UART_NUM_1, atof(el));
 
     cJSON_Delete(rcv);
     httpd_resp_set_status(req, "204 NO CONTENT");
@@ -154,17 +177,23 @@ void RegisterEndPoints(void)
 
     
 
-    httpd_uri_t hello_end_point_config = {
-        .uri = "/hello",
+    httpd_uri_t coordinates_end_point_config = {
+        .uri = "/coordinates",
         .method = HTTP_GET,
-        .handler = on_hello};
-    httpd_register_uri_handler(server, &hello_end_point_config);
+        .handler = on_coordinates};
+    httpd_register_uri_handler(server, &coordinates_end_point_config);
 
     httpd_uri_t dir_end_point_config = {
         .uri = "/dir",
         .method = HTTP_POST,
         .handler = on_dir_set};
     httpd_register_uri_handler(server, &dir_end_point_config);
+
+    httpd_uri_t dirCustom_end_point_config = {
+        .uri = "/dirCustom",
+        .method = HTTP_POST,
+        .handler = on_dirCustom_set};
+    httpd_register_uri_handler(server, &dirCustom_end_point_config);
 
     httpd_uri_t gpredict_end_point_config = {
         .uri = "/gpredict_enable",

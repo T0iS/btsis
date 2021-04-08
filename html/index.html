@@ -32,9 +32,12 @@
 
 
 <div class="main_content">
-    <div class="left-col" style="visibility: hidden;">Coordinates
+    <div class="left-col" style="visibility: hidden;"><div>Coordinates</div>
+        <div class="enable_button" id="set_enable" onclick="toggle()">Manual set</div>
         <div id="az" style="display:flex;flex-direction: row;"><div style="width: 27px">AZ:</div><input type="text" id="azTxt" style="width: 70px;"></div>
-        <div id="el" style="display:flex;flex-direction: row;"><div style="width: 27px">EL:</div><input type="text" id="elTxT" style="width: 70px;"></div>
+        <div id="el" style="display:flex;flex-direction: row;"><div style="width: 27px">EL:</div><input type="text" id="elTxt" style="width: 70px;"></div>
+        <div class="manual_button" id="send_coordinates" onclick="sendCoordinates()" visibility="hidden" >Set</div>
+        
     </div>
 
     <div class="manual_button" style="visibility: hidden; height: 27px; margin-left:100px;" id="back_button" onclick="back_to_menu()" > BACK </div>
