@@ -39,8 +39,9 @@ async function sendCoordinates(){
     let az = $('#azTxt').val();
     fetch("/dirCustom", {method:"POST", body: JSON.stringify({"el": el, "az": az})});
 
-    console.log(el);
-    console.log(az);
+    $('#send_coordinates').css("visibility", "hidden");
+    //console.log(el);
+    //console.log(az);
     //console.log(JSON.stringify({"direction": element_id}));
 } 
 
