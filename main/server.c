@@ -43,7 +43,9 @@ int sendData(const char* logName, const char* data)
     return txBytes;
 }
 
-
+/////////////////////////////////////////////////////////////// 
+// Function inspired by https://github.com/Mair/esp32-course //
+///////////////////////////////////////////////////////////////
 static esp_err_t on_url_hit(httpd_req_t *req)
 {
     ESP_LOGI(TAG, "url %s was hit", req->uri);
